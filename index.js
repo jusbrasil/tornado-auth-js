@@ -1,17 +1,26 @@
 var crypto = require('crypto');
 
-function create_signature(secret, name, parts) {
+let _MAX_AGE_DAYS = 31;
+let _USER_COOKIE_NAME = 'user';
+let _SECRET_KEY = null;
+
+export const configure = (options = {}) => {
+  _MAX_AGE_DAYS = options.max_age_days || _MAX_AGE_DAYS;
+  _USER_COOKIE_NAME = options.user_cookie || _USER_COOKIE_NAME;
+  _SECRET_KEY = options.secret_key || _SECRET_KEY;
+}
+
+const create_signature = (secret, name, parts) => {
   var hmac = crypto.createHmac('sha1', secret);
   hmac.update(name);
   for (var i = 0; i < parts.length; i++) {
     hmac.update(parts[i]);
   }
-
   return hmac.digest('hex');
 }
 
 export let decode_signed_value = (secret, name, value, max_age_days) => {
-  max_age_days = max_age_days === null ? 31 : max_age_days;
+  max_age_days = max_age_days === null ? _MAX_AGE_DAYS : max_age_days;
   if (value === null) {
     return null;
   }
@@ -45,3 +54,14 @@ export let decode_signed_value = (secret, name, value, max_age_days) => {
 
   return new Buffer(parts[0], 'base64').toString('utf8');
 };
+
+export let get_secure_cookie = (cookie_name, value, max_age_days=null) => {
+  if (_SECRET_KEY === null) {
+    throw new Error("Please, configure the secret key first.");
+  }
+  return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
+}
+
+export let get_current_user = (value, max_age_days=null) => {
+  return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
+}
