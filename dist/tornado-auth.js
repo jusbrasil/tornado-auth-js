@@ -135,11 +135,11 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 	};
 
-	function create_signed_value(secret, name, value) {
+	function create_signed_value(value) {
 	  var timestamp = utf8.encode(Math.floor(new Date().getTime() / 1000).toString());
 	  var utf8_value = utf8.encode(JSON.stringify(value));
 	  var value_base64 = new Buffer(utf8_value, 'utf8').toString('base64');
-	  var signature = create_signature(secret, name, [value_base64, timestamp]);
+	  var signature = create_signature(_SECRET_KEY, _USER_COOKIE_NAME, [value_base64, timestamp]);
 
 	  return [value_base64, timestamp, signature].join('|');
 	}
