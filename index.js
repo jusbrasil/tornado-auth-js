@@ -69,7 +69,7 @@ export let get_current_user = (value, max_age_days=null) => {
 
 function _create_signed_value(secret, name, value) {
   var timestamp = utf8.encode(Math.floor((new Date().getTime() / 1000)).toString());
-  var utf8_value = utf8.encode(JSON.stringify(value));
+  var utf8_value = utf8.encode(typeof value === "string" ? value : JSON.stringify(value));
   var value_base64 = new Buffer(utf8_value, 'utf8').toString('base64');
   var signature = create_signature(secret, name, [value_base64, timestamp]);
 
