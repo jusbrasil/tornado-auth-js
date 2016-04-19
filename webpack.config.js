@@ -1,4 +1,5 @@
 var webpack = require('webpack');
+var path =  require('path');
 
 var baseConfig = {
   entry: {
@@ -24,6 +25,11 @@ var baseConfig = {
           presets: ['es2015']
         },
       },
+      {
+        test: /\.js$/,
+        loader: 'eslint-loader',
+        exclude: /node_modules/
+      }
     ],
   },
 
