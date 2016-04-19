@@ -135,13 +135,17 @@ return /******/ (function(modules) { // webpackBootstrap
 	  return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 	};
 
-	function create_signed_value(value) {
+	function _create_signed_value(secret, name, value) {
 	  var timestamp = utf8.encode(Math.floor(new Date().getTime() / 1000).toString());
-	  var utf8_value = utf8.encode(JSON.stringify(value));
+	  var utf8_value = utf8.encode(typeof value === "string" ? value : JSON.stringify(value));
 	  var value_base64 = new Buffer(utf8_value, 'utf8').toString('base64');
-	  var signature = create_signature(_SECRET_KEY, _USER_COOKIE_NAME, [value_base64, timestamp]);
+	  var signature = create_signature(secret, name, [value_base64, timestamp]);
 
 	  return [value_base64, timestamp, signature].join('|');
+	}
+
+	function create_signed_value(value) {
+	  return _create_signed_value(_SECRET_KEY, _USER_COOKIE_NAME, value);
 	}
 	/* WEBPACK VAR INJECTION */}.call(exports, __webpack_require__(1).Buffer))
 
