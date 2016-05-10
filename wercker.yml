@@ -15,7 +15,7 @@ build:
 deploy:
   publish:
     - script:
-        name: generate bundle
+        name: generate dist
         code: |
           webpack build
 
