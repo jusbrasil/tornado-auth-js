@@ -1,0 +1,37 @@
+box: node
+
+build:
+  steps:
+
+    - script:
+        name: echo nodejs information
+        code: |
+          echo "node version $(node -v) running"
+          echo "npm version $(npm -v) running"
+
+    - npm-install
+
+
+deploy:
+  publish:
+    - script:
+        name: generate bundle
+        code: |
+          webpack build
+
+    - script:
+        name: installing deployment dependencies
+        code: |
+          npm install json
+
+    - script:
+        name: npm publish
+        code: |
+          npm run build
+          APP_VERSION=$(cat package.json | ./node_modules/.bin/json version)
+          npm publish
+
+    - github-create-release:
+        token: $GITHUB_TOKEN
+        tag: v$APP_VERSION
+
