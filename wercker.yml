@@ -17,7 +17,7 @@ deploy:
     - script:
         name: generate dist
         code: |
-          webpack build
+          ./node_modules/.bin/webpack build
 
     - script:
         name: installing deployment dependencies
