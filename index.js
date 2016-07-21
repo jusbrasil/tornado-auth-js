@@ -79,3 +79,7 @@ function _create_signed_value(secret, name, value) {
 export function create_signed_value(value) {
   return _create_signed_value(_SECRET_KEY, _USER_COOKIE_NAME, value);
 }
+
+export function create_signed_cookie(cookie_name, value) {
+  return _create_signed_value(_SECRET_KEY, cookie_name, value);
+}
