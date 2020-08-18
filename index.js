@@ -63,6 +63,13 @@ export let get_secure_cookie = (cookie_name, value, max_age_days=null) => {
   return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
 }
 
+export let get_secure_cookie_from_string = (cookie_name, value, max_age_days=null) => {
+  if (_SECRET_KEY === null) {
+    throw new Error("Please, configure the secret key first.");
+  }
+  return decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days);
+}
+
 export let get_current_user = (value, max_age_days=null) => {
   return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 }
