@@ -3,7 +3,6 @@
 Object.defineProperty(exports, "__esModule", {
   value: true
 });
-exports.create_signed_value_from_secret = create_signed_value_from_secret;
 exports.create_signed_value = create_signed_value;
 exports.create_signed_cookie = create_signed_cookie;
 var crypto = require('crypto');
@@ -75,13 +74,22 @@ var get_secure_cookie = exports.get_secure_cookie = function get_secure_cookie(c
   return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
 };
 
+var get_secure_cookie_string = exports.get_secure_cookie_string = function get_secure_cookie_string(cookie_name, value) {
+  var max_age_days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+  if (_SECRET_KEY === null) {
+    throw new Error("Please, configure the secret key first.");
+  }
+  return decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days);
+};
+
 var get_current_user = exports.get_current_user = function get_current_user(value) {
   var max_age_days = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
   return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 };
 
-function create_signed_value_from_secret(secret, name, value) {
+function _create_signed_value(secret, name, value) {
   var timestamp = utf8.encode(Math.floor(new Date().getTime() / 1000).toString());
   var utf8_value = utf8.encode(typeof value === "string" ? value : JSON.stringify(value));
   var value_base64 = new Buffer(utf8_value, 'utf8').toString('base64');
@@ -91,9 +99,9 @@ function create_signed_value_from_secret(secret, name, value) {
 }
 
 function create_signed_value(value) {
-  return create_signed_value_from_secret(_SECRET_KEY, _USER_COOKIE_NAME, value);
+  return _create_signed_value(_SECRET_KEY, _USER_COOKIE_NAME, value);
 }
 
 function create_signed_cookie(cookie_name, value) {
-  return create_signed_value_from_secret(_SECRET_KEY, cookie_name, value);
+  return _create_signed_value(_SECRET_KEY, cookie_name, value);
 }
