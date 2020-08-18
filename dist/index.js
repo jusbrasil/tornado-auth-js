@@ -1,6 +1,6 @@
 'use strict';
 
-Object.defineProperty(exports, '__esModule', {
+Object.defineProperty(exports, "__esModule", {
   value: true
 });
 exports.create_signed_value = create_signed_value;
@@ -12,15 +12,14 @@ var _MAX_AGE_DAYS = 31;
 var _USER_COOKIE_NAME = 'user';
 var _SECRET_KEY = null;
 
-var configure = function configure() {
-  var options = arguments[0] === undefined ? {} : arguments[0];
+var configure = exports.configure = function configure() {
+  var options = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : {};
 
   _MAX_AGE_DAYS = options.max_age_days || _MAX_AGE_DAYS;
   _USER_COOKIE_NAME = options.user_cookie || _USER_COOKIE_NAME;
   _SECRET_KEY = options.secret_key || _SECRET_KEY;
 };
 
-exports.configure = configure;
 var create_signature = function create_signature(secret, name, parts) {
   var hmac = crypto.createHmac('sha1', secret);
   hmac.update(name);
@@ -30,7 +29,7 @@ var create_signature = function create_signature(secret, name, parts) {
   return hmac.digest('hex');
 };
 
-var decode_signed_value = function decode_signed_value(secret, name, value, max_age_days) {
+var decode_signed_value = exports.decode_signed_value = function decode_signed_value(secret, name, value, max_age_days) {
   max_age_days = max_age_days === null ? _MAX_AGE_DAYS : max_age_days;
   if (value === null) {
     return null;
@@ -66,27 +65,33 @@ var decode_signed_value = function decode_signed_value(secret, name, value, max_
   return new Buffer(parts[0], 'base64').toString('utf8');
 };
 
-exports.decode_signed_value = decode_signed_value;
-var get_secure_cookie = function get_secure_cookie(cookie_name, value) {
-  var max_age_days = arguments[2] === undefined ? null : arguments[2];
+var get_secure_cookie = exports.get_secure_cookie = function get_secure_cookie(cookie_name, value) {
+  var max_age_days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
   if (_SECRET_KEY === null) {
-    throw new Error('Please, configure the secret key first.');
+    throw new Error("Please, configure the secret key first.");
   }
   return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
 };
 
-exports.get_secure_cookie = get_secure_cookie;
-var get_current_user = function get_current_user(value) {
-  var max_age_days = arguments[1] === undefined ? null : arguments[1];
+var get_secure_cookie_from_string = exports.get_secure_cookie_from_string = function get_secure_cookie_from_string(cookie_name, value) {
+  var max_age_days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
+
+  if (_SECRET_KEY === null) {
+    throw new Error("Please, configure the secret key first.");
+  }
+  return decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days);
+};
+
+var get_current_user = exports.get_current_user = function get_current_user(value) {
+  var max_age_days = arguments.length > 1 && arguments[1] !== undefined ? arguments[1] : null;
 
   return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 };
 
-exports.get_current_user = get_current_user;
 function _create_signed_value(secret, name, value) {
   var timestamp = utf8.encode(Math.floor(new Date().getTime() / 1000).toString());
-  var utf8_value = utf8.encode(typeof value === 'string' ? value : JSON.stringify(value));
+  var utf8_value = utf8.encode(typeof value === "string" ? value : JSON.stringify(value));
   var value_base64 = new Buffer(utf8_value, 'utf8').toString('base64');
   var signature = create_signature(secret, name, [value_base64, timestamp]);
 
