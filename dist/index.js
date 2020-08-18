@@ -74,7 +74,7 @@ var get_secure_cookie = exports.get_secure_cookie = function get_secure_cookie(c
   return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
 };
 
-var get_secure_cookie_from_string = exports.get_secure_cookie_from_string = function get_secure_cookie_from_string(cookie_name, value) {
+var get_secure_cookie_string = exports.get_secure_cookie_string = function get_secure_cookie_string(cookie_name, value) {
   var max_age_days = arguments.length > 2 && arguments[2] !== undefined ? arguments[2] : null;
 
   if (_SECRET_KEY === null) {

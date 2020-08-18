@@ -63,7 +63,7 @@ export let get_secure_cookie = (cookie_name, value, max_age_days=null) => {
   return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
 }
 
-export let get_secure_cookie_from_string = (cookie_name, value, max_age_days=null) => {
+export let get_secure_cookie_string = (cookie_name, value, max_age_days=null) => {
   if (_SECRET_KEY === null) {
     throw new Error("Please, configure the secret key first.");
   }
