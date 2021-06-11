@@ -64,6 +64,7 @@ export let get_secure_cookie = (cookie_name, value, max_age_days=null) => {
 }
 
 export let get_current_user = (value, max_age_days=null) => {
+  if (!value) return null;
   return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 }
 
