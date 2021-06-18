@@ -20,7 +20,7 @@ const create_signature = (secret, name, parts) => {
   return hmac.digest('hex');
 }
 
-export let decode_signed_value = (secret, name, value, max_age_days) => {
+export const decode_signed_value = (secret, name, value, max_age_days) => {
   max_age_days = max_age_days === null ? _MAX_AGE_DAYS : max_age_days;
   if (value === null) {
     return null;
@@ -56,14 +56,14 @@ export let decode_signed_value = (secret, name, value, max_age_days) => {
   return new Buffer(parts[0], 'base64').toString('utf8');
 };
 
-export let get_secure_cookie = (cookie_name, value, max_age_days=null) => {
+export const get_secure_cookie = (cookie_name, value, max_age_days=null) => {
   if (_SECRET_KEY === null) {
     throw new Error("Please, configure the secret key first.");
   }
   return JSON.parse(decode_signed_value(_SECRET_KEY, cookie_name, value, max_age_days));
 }
 
-export let get_current_user = (value, max_age_days=null) => {
+export const get_current_user = (value, max_age_days=null) => {
   if (!value) return null;
   return get_secure_cookie(_USER_COOKIE_NAME, value, max_age_days);
 }
