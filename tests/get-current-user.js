@@ -21,4 +21,8 @@ describe('get_current_user', () => {
     });
     expect(get_current_user(signedValue)).to.equal(null);
   });
+  it('should return null if cookie is null or undefined', () => {
+    expect(get_current_user(null)).is.null
+    expect(get_current_user(undefined)).is.null
+  });
 });
